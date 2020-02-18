@@ -16,7 +16,7 @@ begbss:
 .equ INITSEG, 0x9000
 .equ SETUPSEG, 0x9020
 .equ SYSSEG, 0x1000
-.equ ENDSEG, SYSDEG + SYSSIZE
+.equ ENDSEG, SYSSEG + SYSSIZE
 
 .equ ROOT_DEV, 0x301
 
@@ -25,7 +25,7 @@ _start:
 
         mov $BOOTSEG, %ax
         mov %ax, %ds
-        mov $INTISEG, %ax
+        mov $INITSEG, %ax
         mov %ax, %es
         mov $256, %cx
         sub %si, %si
@@ -112,7 +112,7 @@ ok1_read:
         je ok2_read
         xor %ax, %ax
         sub %bx, %ax
-        shr %9, %ax
+        shr $9, %ax
 ok2_read:
         call read_track
         mov %ax, %cx
