@@ -177,7 +177,7 @@ sectors:
         .word 0
 msg1:
         .byte 13,10
-        .ascii "Booting Neantis..."
+        .ascii "Bootage de Neantis..."
         .byte 13,10,13,10
         .org 508
 root_dev:

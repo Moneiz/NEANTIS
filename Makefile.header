@@ -1,7 +1,7 @@
 UNAME := $(shell uname)
 
 ifeq ($(UNAME), Linux)
-    AS  =   as --32
+    AS  =   nasm --32
     LD  =   ld 
     LDFLAGS = -m elf_i386 -x
     CC = gcc 
