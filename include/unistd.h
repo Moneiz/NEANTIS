@@ -1,6 +1,32 @@
 #ifndef _UNISTD_H
 #define _UNISTD_H
 
+#define _POSIX_VERSION  198808L
+
+#define _POSIX_CHOWN_RESTRICTED
+#define _POSIX_VDISABLE
+
+#define STDIN_FILENO    0
+#define STDOUT_FILENO   1
+#define STDERR_FILENO   2
+
+#ifndef NULL
+#define NULL    ((void *)0)
+#endif
+
+#define F_OK    0
+#define X_OK    1
+#define W_OK    2
+#define R_OK    4
+
+#define SEEK_SET    0
+#define SEEK_CUR    1
+#define SEEK_END    2
+
+#define _SC_ARG_MAX         1
+#define _SC_CHILD_MAX       2
+#define _SC_CLOCKS_PER_SEC  3
+
 #define __NR_setup  0
 #define __NR_fork   2
 #define __NR_pause  29
