@@ -26,6 +26,28 @@
 #define _SC_ARG_MAX         1
 #define _SC_CHILD_MAX       2
 #define _SC_CLOCKS_PER_SEC  3
+#define _SC_NGROUPS_MAX     4
+#define _SC_OPEN_MAX        5
+#define _SC_JOB_CONTROL     6
+#define _SC_SAVED_IDS       7
+#define _SC_VERSION         8
+
+#define _PC_LINK_MAX            1
+#define _PC_MAX_CANON           2
+#define _PC_MAX_INPUT           3
+#define _PC_NAME_MAX            4
+#define _PC_PATH_MAX            5
+#define _PC_PIPE_BUF            6
+#define _PC_NO_TRUNC            7
+#define _PC_VDISABLE            8
+#define _PC_CHOWN_RESTRICTED    9
+
+#include <sys/stat.h>
+#include <sys/times.h>
+#include <sys/utsname.h>
+#include <utime.h>
+
+#ifdef __LIBRARY__
 
 #define __NR_setup  0
 #define __NR_fork   2
@@ -57,6 +79,8 @@
     errno = -__res; \
     return -1; \
 }
+
+#endif
 
 extern int errno;
 
