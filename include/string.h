@@ -124,10 +124,18 @@ extern inline int strcmp (const char * cs,const char * ct){
         "jl 3f\n\t"
         "negl %%eax\n"
         "3:"
-        :"=a" (__res):"S" (cs), "D" (ct), 
+        :"=a" (__res):"S" (cs), "D" (ct)
         : "si", "di"
     );
     return __res;
+}
+extern inline void * memset(void * s, char c, int count){
+    __asm__("cld\n\t"
+            "rep\n\t"
+            "stosb"
+            ::"a" (c), "D" (s), "c" (count)
+            :"cx", "di");
+    return s;
 }
 
 #endif
