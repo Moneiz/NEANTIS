@@ -13,7 +13,7 @@ typedef long time_t;
 
 #ifndef _PTRDIFF_T
 #define _PTRDIFF_T
-typedef long ptrdiff_t
+typedef long ptrdiff_t;
 #endif // !_PTRDIFF_T
 
 #ifndef NULL

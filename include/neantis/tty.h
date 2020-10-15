@@ -47,7 +47,7 @@ struct tty_struct{
 extern struct tty_struct tty_table[];
 
 // un peu dégueux mais bon
-#define INIT_C_CC "\003\034\177\025\004\0\1\0\021\023\032\0\022\017\027\026\0"
+#define INIT_C_CC "\003\034\177\025\004\0\1\0\021\023\031\0\022\017\027\026\0"
 
 void rs_init(void);
 void con_init(void);

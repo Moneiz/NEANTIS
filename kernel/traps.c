@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <asm/system.h>
 #include <asm/segment.h>
 #include <asm/io.h>
@@ -43,7 +45,7 @@ void trap_init(void){
     set_trap_gate(15,&reserved);
     set_trap_gate(16,&coprocessor_error);
     for(int i = 17; i < 48 ; i++){
-        set_trap_gate(i, &reserved)
+        set_trap_gate(i, &reserved);
     }
     set_trap_gate(45,&irq13);
     outb_p(inb_p(0x21)&0xFB,0x21);
