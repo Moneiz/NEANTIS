@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "segment.h": "c",
+        "sched.h": "c",
+        "system.h": "c",
+        "errno.h": "c"
+    }
+}

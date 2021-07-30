@@ -30,12 +30,6 @@ struct exec{
     && N_MAGIC(x) != ZMAGIC)
 #endif
 
-#ifndef _N_BADMAG
-#define _N_BADMAG(x)     \
-    (N_MAGIC(x) != OMAGIC && N_MAGIC(x) != NMAGIC \
-    && N_MAGIC(x) != ZMAGIC)
-#endif
-
 #define _N_HDROFF(x)    (SEGMENT_SIZE - sizeof(struct exec)) 
 
 #ifndef N_TXTOFF

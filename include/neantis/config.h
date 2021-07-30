@@ -1,6 +1,9 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
+#define KBD_US
+
+/*
 #define NEANTIS_HD
 
 #if defined(NEANTIS_HD)
@@ -32,5 +35,6 @@
 #else
 #error "Must define a HD TYPE"
 #endif
+*/
 
 #endif

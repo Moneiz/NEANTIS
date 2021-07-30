@@ -4,24 +4,24 @@
 #include <neantis/kernel.h>
 
 #define clear_block(addr) \
-__asm__("cld\n\t" \
+__asm__ __volatile__("cld\n\t" \
     "rep\n\t" \
     "stosl" \
-    ::"a" (0), "c" (BLOCK_SIZE/4),"D" ((long)(addr)) : "cx","di")
+    ::"a" (0), "c" (BLOCK_SIZE/4),"D" ((long)(addr)))
 
 #define set_bit(nr, addr) ({ \
-register int res __asm__("ax"); \
-__asm__("btsl %2,%3\n\tsetb %%al":"=a" (res) : "0" (0), "r" (nr), "m" (*(addr))); \
+register int res; \
+__asm__ __volatile__("btsl %2,%3\n\tsetb %%al":"=a" (res) : "0" (0), "r" (nr), "m" (*(addr))); \
 res;})
 
 #define clear_bit(nr, addr) ({ \
-    register int res __asm__("ax"); \
-    __asm__("btrl %2,%3\n\tsetnb %%al" : "=a"(res) : "0" (0), "r" (nr), "m" (*(addr))); \
+    register int res ; \
+    __asm__ __volatile__("btrl %2,%3\n\tsetnb %%al" : "=a"(res) : "0" (0), "r" (nr), "m" (*(addr))); \
     res;})
 
 #define find_first_zero(addr) ({ \
     int __res; \
-    __asm__("cld\n" \
+    __asm__ __volatile__("cld\n" \
         "1:\tlodsl\n\t" \
         "notl %%eax\n\t" \
         "bsfl %%eax,%%edx\n\t" \
@@ -32,7 +32,7 @@ res;})
         "cmpl $8192,%%ecx\n\t" \
         "jl 1b\n" \
         "3:" \
-        :"=c" (__res):"c" (0), "S" (addr):"ax","dx","si"); \
+        :"=c" (__res):"c" (0), "S" (addr)); \
     __res;})
 
 void free_block(int dev, int block){
@@ -57,11 +57,11 @@ void free_block(int dev, int block){
         brelse(bh);
     }
     block -= sb->s_firstdatazone - 1;
-    if(clear_bit(block&0x1FFF,sb->s_zmap[block>>13]->b_data)){
+    if(clear_bit(block&8191,sb->s_zmap[block/8192]->b_data)){
         printk("bloc (%04x:%d) ", dev, block+sb->s_firstdatazone-1);
         panic("free_block: bit deja corrige");
     }
-    sb->s_zmap[block>>13]->b_dirt = 1;
+    sb->s_zmap[block/8192]->b_dirt = 1;
 }
 int new_block(int dev){
     struct buffer_head * bh;
@@ -74,17 +74,17 @@ int new_block(int dev){
     j = 8192;
     for(i = 0; i < 8 ; i++){
         if(bh = sb->s_zmap[i]){
-            if((j = find_first_zero(bh->b_data)) < 0x2000){
+            if((j = find_first_zero(bh->b_data)) < 8192){
                 break;
             }
         }
     }
-    if(i >= 8 || !bh || j >= 0x2000)
+    if(i >= 8 || !bh || j >= 8192)
         return 0;
     if(set_bit(j, bh->b_data))
         panic("new_block: bit deja defini");
     bh->b_dirt = 1;
-    j += i*0x2000 + sb->s_firstdatazone-1;
+    j += i*8192 + sb->s_firstdatazone-1;
     if(j >= sb->s_nzones){
         return 0;
     }
@@ -125,7 +125,7 @@ void free_inode(struct m_inode * inode){
     if(!(bh = sb->s_imap[inode->i_num>>13])){
         panic("imap inexistant dans le superbloc");
     }
-    if(clear_bit(inode->i_num&0x1FFF, bh->b_data)){
+    if(clear_bit(inode->i_num&8191, bh->b_data)){
         panic("free_inode: bit deja corrige");
     }
     bh->b_dirt = 1;
@@ -143,14 +143,14 @@ struct m_inode * new_inode(int dev){
     if(!(sb = get_super(dev))){
         panic("new_inode sans appareil");
     }
-    j = 0x2000;
+    j = 8192;
     for(i = 0; i < 8; i++){
         if(bh = sb->s_imap[i]){
-            if((j = find_first_zero(bh->b_data)) < 0x2000)
+            if((j = find_first_zero(bh->b_data)) < 8192)
                 break;
         }
     }
-    if(!bh || j >= 0x2000 || j+i * 0x2000 > sb->s_ninodes){
+    if(!bh || j >= 8192 || j+i * 8192 > sb->s_ninodes){
         iput(inode);
         return NULL;
     }
@@ -161,8 +161,10 @@ struct m_inode * new_inode(int dev){
     inode->i_count = 1;
     inode->i_nlinks = 1;
     inode->i_dev = dev;
+    inode->i_uid=current->euid;
+    inode->i_gid=current->egid;
     inode->i_dirt = 1;
-    inode->i_num = j + i * 0x2000;
+    inode->i_num = j + i * 8192;
     inode->i_mtime = inode->i_atime = inode->i_ctime = CURRENT_TIME;
     return inode;
 }
