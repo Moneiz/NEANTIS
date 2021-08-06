@@ -25,7 +25,7 @@ int sys_ioctl(unsigned int fd, unsigned int cmd, unsigned long arg){
     struct file * filp;
     int dev,mode;
     if(fd >= NR_OPEN || !(filp = current->filp[fd])){
-        return - EBADF;
+        return -EBADF;
     }
     mode=filp->f_inode->i_mode;
     if(!S_ISCHR(mode) && !S_ISBLK(mode)){
@@ -34,6 +34,7 @@ int sys_ioctl(unsigned int fd, unsigned int cmd, unsigned long arg){
     dev = filp->f_inode->i_zone[0];
     if(MAJOR(dev)>=NR_DEVS){
         panic("appareil inconnu pour ioctl");
+        return -ENODEV;
     }
     if(!ioctl_table[MAJOR(dev)]){
         return -ENOTTY;
